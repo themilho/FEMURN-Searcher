@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca com Puppeteer</title>
+</head>
+<body>
+    <h1>Pesquisar e Baixar PDF</h1>
+    <form action="/search" method="POST">
+        <label for="keyword">Palavra-chave:</label>
+        <input type="text" id="keyword" name="keyword" required>
+        <label for="city">Município:</label>
+        <input type="text" id="city" name="city" required>
+        <label for="startDate">Data início</label>
+        <input type="date" id="startDate" name="startDate">
+        <label for="endDate">Data fim</label>
+        <input type="date" id="endDate" name="endDate">
+        <button type="submit">Pesquisar</button>
+    </form>
+</body>
+</html>
