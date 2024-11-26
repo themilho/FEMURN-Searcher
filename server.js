@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const archiver = require('archiver');
+const path = require('path');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -16,11 +18,10 @@ app.post('/search', async (req, res) => {
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
     const cityToLowerCase = city.trim().toLowerCase();
-    console.log(cityToLowerCase)
-    
+        
 
     // Abre o navegador com o Puppeteer
-    const browser = await puppeteer.launch({headless: false});
+    const browser = await puppeteer.launch({headless:false});
     const page = await browser.newPage();
 
     // Acesse o site desejado e realiza a busca
@@ -63,55 +64,64 @@ app.post('/search', async (req, res) => {
         return;
     }
 
-    //função para deixar a data no formato dd/mm/aaaa:
+    //Insere a palavra-chave 
+    await page.type('#busca_avancada_texto', keyword);
 
-    function formatDateToDDMMYYY (dateString) {
+
+    //função para deixar a data no formato dd/mm/aaaa:
+    function formatDateToDDMMYYYY (dateString) {
         const [year, month, day] = dateString.split ('-');
         return `${day}/${month}/${year}`
     }
 
-    //inserir a data de início:
-    await page.click('#busca_avancada_dataInicio','#busca_avancada_dataFim'); // Clica no campo para ativá-lo
-    await page.focus('#busca_avancada_dataInicio','#busca_avancada_dataFim'); // Garante o foco no campo
-    await page.keyboard.down('Control');
-    await page.keyboard.press('A'); // Seleciona todo o texto atual
-    await page.keyboard.up('Control');
-    await page.keyboard.press('Backspace'); // Limpa o campo
-    await page.type('#busca_avancada_dataInicio', formatDateToDDMMYYY(startDate)); // Digita o novo valor
-    await page.type('#busca_avancada_dataFim', formatDateToDDMMYYY(endDate));
+
+   // Função para limpar e preencher campos
+    async function clean(selector, date) {
+        
+        await page.click(selector); // Clica no campo para ativá-lo
+        await page.focus(selector); // Garante o foco no campo
+        await page.keyboard.down('Control'); // Segura a tecla Control
+        await page.keyboard.press('A'); // Seleciona todo o texto
+        await page.keyboard.up('Control'); // Solta a tecla Control
+        await page.keyboard.press('Backspace'); // Apaga o conteúdo do campo
+        await page.type(selector, date); // Insere a nova data
+    }
+
+    // Inserir as datas
+    await clean('#busca_avancada_dataInicio', formatDateToDDMMYYYY(startDate));
+    await clean('#busca_avancada_dataFim', formatDateToDDMMYYYY(endDate));
     
 
-     //inserir a data fun:
-     await page.click('#busca_avancada_dataFim'); // Clica no campo para ativá-lo
-     await page.focus('#busca_avancada_dataFim'); // Garante o foco no campo
-     await page.keyboard.down('Control');
-     await page.keyboard.press('A'); // Seleciona todo o texto atual
-     await page.keyboard.up('Control');
-     await page.keyboard.press('Backspace'); // Limpa o campo
-     await page.type('#busca_avancada_dataFim', formatDateToDDMMYYY(endDate));
-      
-    
-    
-    //Insere a palavra-chave e clica em pesquisar
-    await page.type('#busca_avancada_texto', keyword);
+    //Clica em pesquisar
     await page.click('#busca_avancada_Enviar');
     await page.waitForNavigation();
-
-    //ATÉ AQUI
-  
     
-    //Gera o PDF da página de resultados
-    // const pdfBuffer = await page.pdf();
 
-    // await browser.close();
+    // Encontrar o link da pesquisa feita
+    const data = await page.evaluate(() => {
+        const rows = document.querySelectorAll('tbody tr');
+        const results = [];
 
-    // // Envia o PDF de volta ao usuário
-    // res.set({
-    //     'Content-Type': 'application/pdf',
-    //     'Content-Disposition': 'attachment; filename=resultados.pdf',
-    //     'Content-Length': pdfBuffer.length,
-    // });
-    // res.send(pdfBuffer);
+        rows.forEach(row => {
+            // Nome do município e título (primeira e segunda coluna)
+            const municipio = row.querySelector('td:first-child a')?.textContent.trim() || 'Não identificado';
+            const title = row.querySelector('td:nth-child(2) a')?.textContent.trim() || 'Não identificado';
+
+            //Link que contém no "município"
+            const links = row.querySelector('td:first-child a')?.href || 'Não encontrado';
+            
+            if (links.length) {
+                results.push({ municipio, title, links });
+            }
+        });
+
+        return results;
+    });
+
+    console.log(JSON.stringify(data, null, 2));
+    res.json(data);
+    await browser.close();
+
 });
 
 const PORT = 3000;
