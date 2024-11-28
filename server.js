@@ -97,8 +97,16 @@ app.post('/search', async (req, res) => {
     await page.waitForNavigation();
     
     //Aguarda o resultado da pesquisa ser carregado, antes de executar o próximo código:
-
-    await page.waitForSelector('tbody', {visible: true});    
+   
+    // await Promise.race([
+    //     page.waitForSelector('tbody tr', { visible: true }),
+    //     page.waitForSelector('.mensagem-erro', { visible: true })
+    // ]);
+   
+    // await page.waitForFunction(() =>
+    //     document.querySelector('tbody tr td:first-child a')?.textContent.trim() !== ''
+    // );
+    // await page.waitForSelector('tbody tr', {visible: true});    
 
     // Encontrar o link da pesquisa feita
     
