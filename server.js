@@ -21,7 +21,7 @@ app.post('/search', async (req, res) => {
         
 
     // Abre o navegador com o Puppeteer
-    const browser = await puppeteer.launch({headless:false});
+    const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
 
     // Acesse o site desejado e realiza a busca
@@ -94,29 +94,36 @@ app.post('/search', async (req, res) => {
 
     //Clica em pesquisar
     await page.click('#busca_avancada_Enviar');
-    await page.waitForNavigation();
-    
+    // await page.waitForNavigation();
+   
+    /*
     //Aguarda o resultado da pesquisa ser carregado, antes de executar o próximo código:
+    
+    //Tentativa 1
+    await Promise.race([
+        page.waitForSelector('tbody tr', { visible: true }),
+        page.waitForSelector('.mensagem-erro', { visible: true })
+    ]);
    
-    // await Promise.race([
-    //     page.waitForSelector('tbody tr', { visible: true }),
-    //     page.waitForSelector('.mensagem-erro', { visible: true })
-    // ]);
-   
-    // await page.waitForFunction(() =>
-    //     document.querySelector('tbody tr td:first-child a')?.textContent.trim() !== ''
-    // );
+    //Tentativa 2
+    await page.waitForFunction(() =>
+        document.querySelector('tbody tr td:first-child a')?.textContent.trim() !== ''
+    );
+    */
+    //Tentativa 3
     // await page.waitForSelector('tbody tr', {visible: true});    
+    await page.waitForSelector('tbody tr td a', {visible:true});
 
     // Encontrar o link da pesquisa feita
     
     const data = await page.evaluate(() => {
         const rows = document.querySelectorAll('tbody tr');
         const results = [];
+        console.log(rows)
 
         rows.forEach(row => {
             // Nome do município e título (primeira e segunda coluna)
-            console.log(row.outerHTML) //Mostra o HTML completo da linha que foi capturada
+            // console.log(row.outerHTML) //Mostra o HTML completo da linha que foi capturada
             const municipio = row.querySelector('td:first-child a')?.textContent.trim() || 'Não identificado';
             const title = row.querySelector('td:nth-child(2) a')?.textContent.trim() || 'Não identificado';
 
