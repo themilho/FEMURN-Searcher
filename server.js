@@ -96,28 +96,35 @@ app.post('/search', async (req, res) => {
     await page.click('#busca_avancada_Enviar');
     await page.waitForNavigation();
     
+    //Aguarda o resultado da pesquisa ser carregado, antes de executar o próximo código:
+
+    await page.waitForSelector('tbody', {visible: true});    
 
     // Encontrar o link da pesquisa feita
+    
     const data = await page.evaluate(() => {
         const rows = document.querySelectorAll('tbody tr');
         const results = [];
 
         rows.forEach(row => {
             // Nome do município e título (primeira e segunda coluna)
+            console.log(row.outerHTML) //Mostra o HTML completo da linha que foi capturada
             const municipio = row.querySelector('td:first-child a')?.textContent.trim() || 'Não identificado';
             const title = row.querySelector('td:nth-child(2) a')?.textContent.trim() || 'Não identificado';
 
             //Link que contém no "município"
-            const links = row.querySelector('td:first-child a')?.href || 'Não encontrado';
+            const links = row.querySelector('td:nth-child(2) a')?.href || 'Não encontrado';
             
-            if (links.length) {
+            if (links !== 'Não encontrado') {
                 results.push({ municipio, title, links });
             }
+            
         });
-
+    
         return results;
     });
-
+    // await page.click('#datatable_next');
+   
     console.log(JSON.stringify(data, null, 2));
     res.json(data);
     await browser.close();
