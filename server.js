@@ -93,29 +93,11 @@ app.post('/search', async (req, res) => {
     
 
     //Clica em pesquisar
-    await page.click('#busca_avancada_Enviar');
-    // await page.waitForNavigation();
-   
-    /*
-    //Aguarda o resultado da pesquisa ser carregado, antes de executar o próximo código:
-    
-    //Tentativa 1
-    await Promise.race([
-        page.waitForSelector('tbody tr', { visible: true }),
-        page.waitForSelector('.mensagem-erro', { visible: true })
-    ]);
-   
-    //Tentativa 2
-    await page.waitForFunction(() =>
-        document.querySelector('tbody tr td:first-child a')?.textContent.trim() !== ''
-    );
-    */
-    //Tentativa 3
-    // await page.waitForSelector('tbody tr', {visible: true});    
+    await page.click('#busca_avancada_Enviar');   
     await page.waitForSelector('tbody tr td a', {visible:true});
 
-    // Encontrar o link da pesquisa feita
-    
+
+    // Encontrar o link da pesquisa feita    
     const data = await page.evaluate(() => {
         const rows = document.querySelectorAll('tbody tr');
         const results = [];
@@ -126,12 +108,13 @@ app.post('/search', async (req, res) => {
             // console.log(row.outerHTML) //Mostra o HTML completo da linha que foi capturada
             const municipio = row.querySelector('td:first-child a')?.textContent.trim() || 'Não identificado';
             const title = row.querySelector('td:nth-child(2) a')?.textContent.trim() || 'Não identificado';
+            const date = row.querySelector('td:nth-child(4) a')?.textContent.trim() || 'Não identificado';
 
             //Link que contém no "município"
             const links = row.querySelector('td:nth-child(2) a')?.href || 'Não encontrado';
             
             if (links !== 'Não encontrado') {
-                results.push({ municipio, title, links });
+                results.push({ municipio, title, date, links });
             }
             
         });

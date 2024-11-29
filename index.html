@@ -56,22 +56,42 @@
             }
     
             // Itera pelos resultados e renderiza
-            data.forEach(({ municipio, title, links }) => {
+            data.forEach(({ municipio, title, date, links }) => {
                 const cityHeader = document.createElement('h2');
                 cityHeader.textContent = municipio;
     
                 const titlePara = document.createElement('p');
                 titlePara.textContent = title;
-    
+                
+                const datePara = document.createElement('p');
+                datePara.textContent = date;
+                    
                 const linkPara = document.createElement('p');
                 const linkAnchor = document.createElement('a');
                 linkAnchor.href = links;
                 linkAnchor.textContent = links;
                 linkAnchor.target = '_blank';
                 linkPara.appendChild(linkAnchor);
-    
+               
+                
+                //Criando os nomes Título, Data e Link:
+                const titleName = document.createElement('p');
+                titleName.textContent = 'Título:';
+
+                const dateName = document.createElement('p');
+                dateName.textContent = 'Data:';
+
+                const linkName = document.createElement('p');
+                linkName.textContent = 'Link:';
+                
+               
+                //imprimindo os resultados no html:
                 resultsDiv.appendChild(cityHeader);
+                resultsDiv.appendChild(titleName);
                 resultsDiv.appendChild(titlePara);
+                resultsDiv.appendChild(dateName);
+                resultsDiv.appendChild(datePara);
+                resultsDiv.appendChild(linkName);
                 resultsDiv.appendChild(linkPara);
             });
         }
