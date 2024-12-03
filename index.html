@@ -1,100 +1,37 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Busca FEMURN</title>
+    <title>FEMURN Searcher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Pesquisar e Baixar PDF</h1>
-    <form action="/search" method="POST">
-        <label for="keyword">Palavra-chave:</label>
-        <input type="text" id="keyword" name="keyword" required>
-        <label for="city">Município:</label>
-        <input type="text" id="city" name="city" required>
-        <label for="startDate">Data início</label>
-        <input type="date" id="startDate" name="startDate">
-        <label for="endDate">Data fim</label>
-        <input type="date" id="endDate" name="endDate">
-        <button type="submit">Pesquisar</button>
-    </form>
+    <div class="container py-4">
+        <header class="text-center mb-4">
+            <h1 class="display-5">FEMURN Searcher</h1>
+        </header>
 
-    <h2>Resultados da Busca</h2>
-    <div id="results"></div>
-    <form method="get" action="/download-all">
-        <button id="download-all" style="display: none;">Baixar Todos</button>
-    </form>
+        <section class="mb-5">
+            <div class="card shadow-5m">
+                <div class="card-body">
+                    <form action="/search" method="post" id="search-form">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="keyword" class="form-label">Palavra-chave:</label>
+                                <input type="text" id="keyword" name="keyword" class="form-control" required aria-label="Digite a palavra-chave">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="city" class="form-control">Município</label>
+                                <input type="text" id="city" name="city" class="form-control" required arial-label="">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
 
-    <script>
-        document.querySelector('form[action="/search"]').addEventListener('submit', async function (event) {
-            event.preventDefault(); // Impede o envio tradicional do formulário
-    
-            const formData = new FormData(event.target);
-            const searchParams = new URLSearchParams(formData);
-    
-            try {
-                const response = await fetch('/search', {
-                    method: 'POST',
-                    body: searchParams,
-                });
-    
-                const results = await response.json();
-                renderResults(results); // Função para renderizar os resultados
-            } catch (error) {
-                console.error('Erro ao buscar dados:', error);
-            }
-        });
-    
-        // Função para exibir os resultados
-        function renderResults(data) {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = ''; // Limpa resultados anteriores
-    
-            if (data.length === 0) {
-                resultsDiv.innerHTML = '<p>Nenhum resultado encontrado.</p>';
-                return;
-            }
-    
-            // Itera pelos resultados e renderiza
-            data.forEach(({ municipio, title, date, links }) => {
-                const cityHeader = document.createElement('h2');
-                cityHeader.textContent = municipio;
-    
-                const titlePara = document.createElement('p');
-                titlePara.textContent = title;
-                
-                const datePara = document.createElement('p');
-                datePara.textContent = date;
-                    
-                const linkPara = document.createElement('p');
-                const linkAnchor = document.createElement('a');
-                linkAnchor.href = links;
-                linkAnchor.textContent = links;
-                linkAnchor.target = '_blank';
-                linkPara.appendChild(linkAnchor);
-               
-                
-                //Criando os nomes Título, Data e Link:
-                const titleName = document.createElement('p');
-                titleName.textContent = 'Título:';
-
-                const dateName = document.createElement('p');
-                dateName.textContent = 'Data:';
-
-                const linkName = document.createElement('p');
-                linkName.textContent = 'Link:';
-                
-               
-                //imprimindo os resultados no html:
-                resultsDiv.appendChild(cityHeader);
-                resultsDiv.appendChild(titleName);
-                resultsDiv.appendChild(titlePara);
-                resultsDiv.appendChild(dateName);
-                resultsDiv.appendChild(datePara);
-                resultsDiv.appendChild(linkName);
-                resultsDiv.appendChild(linkPara);
-            });
-        }
-    </script>
+    </div>
 </body>
 </html>

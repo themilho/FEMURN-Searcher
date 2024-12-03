@@ -17,8 +17,8 @@ app.post('/search', async (req, res) => {
     const city = req.body.city;
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
-    const cityToLowerCase = city.trim().toLowerCase();
-        
+    const cityHall = 'Prefeitura Municipal de ';
+    const cityToLowerCase = cityHall + (city.trim().toLowerCase());  
 
     // Abre o navegador com o Puppeteer
     const browser = await puppeteer.launch({headless: false});
@@ -27,6 +27,7 @@ app.post('/search', async (req, res) => {
     // Acesse o site desejado e realiza a busca
     await page.goto('https://www.diariomunicipal.com.br/femurn/pesquisar');
 
+    /*  //melhoria futura: pesquisar por todos os municípios
     if(cityToLowerCase === "todos") {
         await page.evaluate((name) => {
             const options = Array.from(document.querySelectorAll('select#busca_avancada_entidadeUsuaria option'));
@@ -36,7 +37,7 @@ app.post('/search', async (req, res) => {
          }
            
         })
-    }
+    } */
 
     //INICIA AQUI
     const cityValue = await page.evaluate((name) => {
@@ -50,7 +51,7 @@ app.post('/search', async (req, res) => {
         
         return option ? option.value : null;
         
-    }, city);
+    }, cityToLowerCase);
     
 
 
