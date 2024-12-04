@@ -1,6 +1,6 @@
 document.querySelector('#search-form').addEventListener('submit', async function (event) {
     event.preventDefault();
-    const formData = new formData (event.target);
+    const formData = new FormData (event.target);
     const searchParams = new URLSearchParams(formData);
 
     try {
