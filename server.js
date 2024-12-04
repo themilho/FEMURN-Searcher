@@ -124,7 +124,6 @@ app.post('/search', async (req, res) => {
     });
     // await page.click('#datatable_next');
    
-    console.log(JSON.stringify(data, null, 2));
     res.json(data);
     await browser.close();
 
