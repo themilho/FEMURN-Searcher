@@ -1,3 +1,16 @@
+// const app = require('express')();
+// const bodyParser = require('body-parser');
+
+// app.use(bodyParser.urlencoded({ extended: true }));
+
+// app.get('/', (req, res) => {
+//     res.send('Hello, Vercel!');
+// });
+
+// module.exports = app; // Exporta o app
+
+
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const puppeteer = require('puppeteer');
@@ -29,7 +42,7 @@ app.post('/search', async (req, res) => {
     const cityToLowerCase = cityHall + (city.trim().toLowerCase());  
 
     // Abre o navegador com o Puppeteer
-    const browser = await puppeteer.launch({headless: false});
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     // Acesse o site desejado e realiza a busca
@@ -137,7 +150,6 @@ app.post('/search', async (req, res) => {
 
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+// Exporte o app para o Vercel
+module.exports = app;
+
