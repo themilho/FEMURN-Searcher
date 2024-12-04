@@ -33,8 +33,8 @@ function renderResults(data) {
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title text-primary">${municipio}</h5>
-                        <p class="card-text"><strong>Título:</strong>${title}</p>
-                        <p class="card-text"><strong>Data:</strong>${date}</p> 
+                        <p class="card-text"><strong>Título: </strong>${title}</p>
+                        <p class="card-text"><strong>Data: </strong>${date}</p> 
                         <a href="${links}" class="btn btn-primary btn-sm" target="_blank">Abrir</a>
                     </div> 
                 </div>
