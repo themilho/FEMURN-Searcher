@@ -7,6 +7,7 @@
 /// <reference types="node" />
 /// <reference types="node" />
 import type FS from 'fs/promises';
+import type { OperatorFunction } from '../../third_party/rxjs/rxjs.js';
 import { Observable } from '../../third_party/rxjs/rxjs.js';
 import type { CDPSession } from '../api/CDPSession.js';
 import type { EventEmitter, EventType } from './EventEmitter.js';
@@ -89,11 +90,11 @@ export declare function validateDialogType(type: string): 'alert' | 'confirm' | 
 /**
  * @internal
  */
-export declare function timeout(ms: number): Observable<never>;
+export declare function timeout(ms: number, cause?: Error): Observable<never>;
 /**
  * @internal
  */
-export declare const UTILITY_WORLD_NAME = "__puppeteer_utility_world__";
+export declare const UTILITY_WORLD_NAME: string;
 /**
  * @internal
  */
@@ -123,4 +124,12 @@ export declare const unitToPixels: {
  * @internal
  */
 export declare function fromEmitterEvent<Events extends Record<EventType, unknown>, Event extends keyof Events>(emitter: EventEmitter<Events>, eventName: Event): Observable<Events[Event]>;
+/**
+ * @internal
+ */
+export declare function fromAbortSignal(signal?: AbortSignal, cause?: Error): Observable<never>;
+/**
+ * @internal
+ */
+export declare function filterAsync<T>(predicate: (value: T) => boolean | PromiseLike<boolean>): OperatorFunction<T, T>;
 //# sourceMappingURL=util.d.ts.map
