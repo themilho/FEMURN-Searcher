@@ -29,7 +29,7 @@ app.post('/search', async (req, res) => {
     const cityToLowerCase = cityHall + (city.trim().toLowerCase());  
 
     // Abre o navegador com o Puppeteer
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
 
     // Acesse o site desejado e realiza a busca
