@@ -32,7 +32,19 @@ app.post('/search', async (req, res) => {
     // Abre o navegador com o Puppeteer (chrome-aws-lambda)
     let browser;
     try {
-        const browser = await puppeteer.launch({headless: false});
+        // const browser = await puppeteer.launch({headless: false});
+        browser = await puppeteer.launch({
+            args: [
+                ...chromium.args,
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--disable-gpu',
+            ],
+            executablePath: await chromium.executablePath,
+            headless:chromium.headless,
+        });
         const page = await browser.newPage();
 
         // Acesse o site desejado e realiza a busca
@@ -60,8 +72,6 @@ app.post('/search', async (req, res) => {
         if (cityValue) {
             await page.select('select#busca_avancada_entidadeUsuaria', cityValue);
         } else {
-            console.log('Município não encontrado');
-            await browser.close();
             res.status(404).send('Município não encontrado');
             return;
         }
