@@ -140,3 +140,7 @@ app.post('/search', async (req, res) => {
 // Exporte o app para o Vercel
 module.exports = app;
 
+const PORT = 4000;
+app.listen (PORT, () => {
+    console.log(`Server is running at http:localhost:${PORT}`)
+});
