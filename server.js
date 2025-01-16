@@ -5,8 +5,8 @@ let chrome = {};
 const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
-const { defaultViewport, headless } = require('chrome-aws-lambda');
-const { executablePath } = require('@sparticuz/chromium');
+// const { defaultViewport, headless } = require('chrome-aws-lambda');
+// const { executablePath } = require('@sparticuz/chromium');
 
 if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 	chrome = require('@sparticuz/chromium');
