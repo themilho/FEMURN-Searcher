@@ -1,19 +1,21 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-let puppeteer;
-let chrome = {};
+// let puppeteer;
+// let chrome = {};
+const chromium = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
 // const { defaultViewport, headless } = require('chrome-aws-lambda');
 // const { executablePath } = require('@sparticuz/chromium');
 
-if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+/*if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 	chrome = require('@sparticuz/chromium');
 	puppeteer = require('puppeteer-core');
 } else {
 	puppeteer = require('puppeteer');	
-}
+}*/
 
 /*function ifAwsLambda () {
     let options = {};
@@ -45,9 +47,22 @@ app.get('/style.css', (req,res) => {
     res.sendFile(__dirname + '/style.css')
 })
 
+app.get('/debug', async (req,res) => {
+    const executablePath = await chromium.executablePath();
+    const exists = fs.existsSync(executablePath);
+    
+    res.json ({
+        executablePath,
+        exists,
+        args: chromium.args,
+        headless: chromium.headless,
+        defaultViewport: chromium.defaultViewport, 
+    });
+})
+
 app.post('/search', async (req, res) => {
     
-    let options = {};
+    /*let options = {};
 
     if (process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.VERCEL) {
         options = {
@@ -57,7 +72,15 @@ app.post('/search', async (req, res) => {
             headless: chrome.headless,
             ignoreHTTPSErrors: true,
         }
-    }
+    }*/
+
+    const options = {
+        args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+    };
 
     const keyword = req.body.keyword;
     const city = req.body.city;
