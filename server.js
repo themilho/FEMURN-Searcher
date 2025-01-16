@@ -49,12 +49,12 @@ app.post('/search', async (req, res) => {
     
     let options = {};
 
-    if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+    if (process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.VERCEL) {
         options = {
             args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"], 
             defaultViewport: chrome.defaultViewport,
             executablePath: await chrome.executablePath,
-            headless: true,
+            headless: chrome.headless,
             ignoreHTTPSErrors: true,
         }
     }
