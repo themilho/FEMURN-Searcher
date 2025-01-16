@@ -1,10 +1,34 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const puppeteer = require('puppeteer');
-const chromium = require('chrome-aws-lambda')
+let puppeteer;
+let chrome = {};
 const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
+const { defaultViewport, headless } = require('chrome-aws-lambda');
+const { executablePath } = require('@sparticuz/chromium');
+
+if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+	chrome = require('@sparticuz/chromium');
+	puppeteer = require('puppeteer-core');
+} else {
+	puppeteer = require('puppeteer');	
+}
+
+/*function ifAwsLambda () {
+    let options = {};
+
+    if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+        options = {
+            args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"], 
+            defaultViewport: chrome.defaultViewport,
+            executablePath: await chrome.executablePath,
+            headless: true,
+            ignoreHTTPSErrors: true,
+        }
+    }
+    return options;
+}*/
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,6 +46,19 @@ app.get('/style.css', (req,res) => {
 })
 
 app.post('/search', async (req, res) => {
+    
+    let options = {};
+
+    if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+        options = {
+            args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"], 
+            defaultViewport: chrome.defaultViewport,
+            executablePath: await chrome.executablePath,
+            headless: true,
+            ignoreHTTPSErrors: true,
+        }
+    }
+
     const keyword = req.body.keyword;
     const city = req.body.city;
     const startDate = req.body.startDate;
@@ -32,8 +69,8 @@ app.post('/search', async (req, res) => {
     // Abre o navegador com o Puppeteer (chrome-aws-lambda)
     let browser;
     try {
-        // const browser = await puppeteer.launch({headless: false});
-        browser = await puppeteer.launch({
+        browser = await puppeteer.launch(options);
+        /*browser = await puppeteer.launch({
             args: [
                 ...chromium.args,
                 '--no-sandbox',
@@ -44,7 +81,7 @@ app.post('/search', async (req, res) => {
             ],
             executablePath: await chromium.executablePath,
             headless:chromium.headless,
-        });
+        });*/
         const page = await browser.newPage();
 
         // Acesse o site desejado e realiza a busca
