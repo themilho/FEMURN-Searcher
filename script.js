@@ -3,6 +3,10 @@ document.querySelector('#search-form').addEventListener('submit', async function
     const formData = new FormData (event.target);
     const searchParams = new URLSearchParams(formData);
 
+    const searchingButton = this.querySelector("button[type= 'submit']");
+    searchingButton.textContent = "Pesquisando ..."
+    searchingButton.disabled = true;
+
     try {
         const response = await fetch('/search', {
             method: 'POST',
@@ -15,7 +19,11 @@ document.querySelector('#search-form').addEventListener('submit', async function
         renderResults(results);
     } catch (error) {
         console.error('Erro ao buscar dados', error);
-    }    
+    }   
+    
+    //Retornar o botão "Pesquisar" para o estado normal
+    searchingButton.textContent = "Pesquisar";
+    searchingButton.disabled = false;
 })
 
 function renderResults(data) {
