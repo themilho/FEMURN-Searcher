@@ -1,36 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-// let puppeteer;
-// let chrome = {};
 const chromium = require('@sparticuz/chromium');
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
-// const { defaultViewport, headless } = require('chrome-aws-lambda');
-// const { executablePath } = require('@sparticuz/chromium');
 
-/*if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-	chrome = require('@sparticuz/chromium');
-	puppeteer = require('puppeteer-core');
-} else {
-	puppeteer = require('puppeteer');	
-}*/
 
-/*function ifAwsLambda () {
-    let options = {};
-
-    if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-        options = {
-            args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"], 
-            defaultViewport: chrome.defaultViewport,
-            executablePath: await chrome.executablePath,
-            headless: true,
-            ignoreHTTPSErrors: true,
-        }
-    }
-    return options;
-}*/
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -60,20 +36,7 @@ app.get('/debug', async (req,res) => {
     });
 })
 
-app.post('/search', async (req, res) => {
-    
-    /*let options = {};
-
-    if (process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.VERCEL) {
-        options = {
-            args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"], 
-            defaultViewport: chrome.defaultViewport,
-            executablePath: await chrome.executablePath,
-            headless: chrome.headless,
-            ignoreHTTPSErrors: true,
-        }
-    }*/
-
+app.post('/search', async (req, res) => {   
     const options = {
         args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
         defaultViewport: chromium.defaultViewport,
@@ -93,25 +56,12 @@ app.post('/search', async (req, res) => {
     let browser;
     try {
         browser = await puppeteer.launch(options);
-        /*browser = await puppeteer.launch({
-            args: [
-                ...chromium.args,
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--disable-gpu',
-            ],
-            executablePath: await chromium.executablePath,
-            headless:chromium.headless,
-        });*/
         const page = await browser.newPage();
 
         // Acesse o site desejado e realiza a busca
         await page.goto('https://www.diariomunicipal.com.br/femurn/pesquisar');
 
     
-
         //INICIA AQUI
         const cityValue = await page.evaluate((name) => {
             const normalizedName = name.trim().toLowerCase(); // Remove espaços e coloca tudo em minúsculas
